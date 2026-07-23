@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Content Security Policy to enforce security -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;">
+  <title>Horizon Link</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Custom Title Bar -->
+    <header class="title-bar">
+      <div class="drag-region"></div>
+      <div class="title">Horizon Link</div>
+    </header>
+    
+    <main class="content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="status-panel">
+          <h3>Connection Status</h3>
+          <div class="status-indicator offline">
+            <span class="dot"></span>
+            <span class="text">Disconnected</span>
+          </div>
+        </div>
+
+        <div class="controls-panel">
+          <button id="startSharingBtn" class="primary-btn">Start Sharing</button>
+          <button id="settingsBtn" class="secondary-btn">Settings</button>
+        </div>
+      </aside>
+
+      <!-- Main Area -->
+      <section class="main-panel">
+        <div class="placeholder-content">
+          <div class="icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-up"><path d="m9 10 3-3 3 3"/><path d="M12 7v8"/><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
+          </div>
+          <h2>Ready to Stream</h2>
+          <p>Click "Start Sharing" to broadcast your screen to the mobile app.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

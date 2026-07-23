@@ -1,0 +1,215 @@
+:root {
+  /* Catppuccin Mocha inspired color palette for a sleek look */
+  --bg-dark: #11111b;
+  --bg-panel: #1e1e2e;
+  --bg-card: #313244;
+  --text-main: #cdd6f4;
+  --text-muted: #a6adc8;
+  --accent: #cba6f7;
+  --accent-hover: #b4befe;
+  --danger: #f38ba8;
+  --danger-hover: #f5c2e7;
+  --success: #a6e3a1;
+  --border: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  overflow: hidden;
+  user-select: none;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Custom Title Bar */
+.title-bar {
+  height: 32px;
+  background-color: var(--bg-panel);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.drag-region {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 150px; /* Space for OS window controls */
+  bottom: 0;
+  -webkit-app-region: drag;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Layout */
+.content {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 32px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background-color: var(--bg-panel);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  border-right: 1px solid var(--border);
+}
+
+.status-panel h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--bg-card);
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.status-indicator .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--danger);
+  box-shadow: 0 0 12px rgba(243, 139, 168, 0.5);
+  transition: all 0.3s ease;
+}
+
+.status-indicator.online .dot {
+  background-color: var(--success);
+  box-shadow: 0 0 12px rgba(166, 227, 161, 0.5);
+}
+
+/* Controls */
+.controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+}
+
+.primary-btn {
+  background-color: var(--accent);
+  color: var(--bg-dark);
+}
+
+.primary-btn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.primary-btn.active {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+.primary-btn.active:hover {
+  background-color: var(--danger-hover);
+  color: var(--bg-dark);
+}
+
+.secondary-btn {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.secondary-btn:hover {
+  background-color: var(--bg-card);
+}
+
+/* Main Panel */
+.main-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, var(--bg-panel) 0%, var(--bg-dark) 120%);
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  opacity: 0.8;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.icon-container {
+  width: 88px;
+  height: 88px;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-panel));
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+}
+
+.placeholder-content h2 {
+  font-weight: 500;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+
+.placeholder-content p {
+  color: var(--text-muted);
+  max-width: 280px;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 0.8; transform: translateY(0); }
+}
