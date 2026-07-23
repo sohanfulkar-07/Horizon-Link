@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Card from '../components/Card';
 import Switch from '../components/Switch';
 import Select from '../components/Select';

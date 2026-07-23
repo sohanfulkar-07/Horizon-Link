@@ -23,4 +23,10 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   minimize: () => ipcRenderer.send('window-minimize'),
   maximize: () => ipcRenderer.send('window-maximize'),
   close: () => ipcRenderer.send('window-close'),
+
+  // Devices API
+  getDevices: () => ipcRenderer.invoke('get-devices'),
+  onDevicesUpdated: (callback: (devices: any[]) => void) => {
+    ipcRenderer.on('devices-updated', (_event, devices) => callback(devices))
+  }
 })

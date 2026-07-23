@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import Button from '../components/Button';
-import { Activity, Battery, Monitor, Signal, Wifi, Usb, Bluetooth } from 'lucide-react';
+import { Activity, Battery, Monitor, Signal, Wifi } from 'lucide-react';
+import { DeviceInfo } from '../types';
 
 export default function Dashboard() {
   const [isSharing, setIsSharing] = useState(false);
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
+
+  useEffect(() => {
+    // Fetch initial devices
+    if (window.ipcRenderer?.getDevices) {
+      window.ipcRenderer.getDevices().then(setDevices);
+      
+      // Listen for updates
+      window.ipcRenderer.onDevicesUpdated((updatedDevices) => {
+        setDevices(updatedDevices);
+      });
+    }
+  }, []);
 
   return (
     <div className="animate-fade-in flex flex-col gap-6 max-w-6xl mx-auto">
@@ -97,19 +111,30 @@ export default function Dashboard() {
         <div className="flex flex-col gap-6 lg:col-span-1">
           
           {/* Active Device Card */}
-          <Card title="Active Device">
-            <div className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <Monitor size={24} />
+          <Card title="Active Devices">
+            {devices.length === 0 ? (
+              <div className="text-center text-muted py-6">
+                <Monitor size={32} className="mx-auto mb-2 opacity-30" />
+                <p className="text-sm">No devices connected</p>
               </div>
-              <div className="flex-1">
-                <h4 className="font-medium">iPad Pro (11-inch)</h4>
-                <p className="text-xs text-success flex items-center gap-1 mt-0.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                  Connected
-                </p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {devices.map(device => (
+                  <div key={device.id} className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5">
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                      <Monitor size={24} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium">{device.name || device.ip}</h4>
+                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${device.status === 'connected' ? 'text-success' : 'text-muted'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${device.status === 'connected' ? 'bg-success' : 'bg-muted'}`} />
+                        {device.status === 'connected' ? 'Connected' : 'Disconnected'}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
             
             <div className="mt-6 flex flex-col gap-4">
               <div className="flex items-center justify-between">

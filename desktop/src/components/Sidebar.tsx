@@ -1,4 +1,3 @@
-import React from 'react';
 import { LayoutDashboard, MonitorSmartphone, Monitor, Activity, Settings, Info } from 'lucide-react';
 import { Page } from '../App';
 

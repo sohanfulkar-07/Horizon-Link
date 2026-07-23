@@ -1,5 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
+import { BroadcastService } from './services/BroadcastService'
+import { ConnectionManager } from './services/ConnectionManager'
+import { DeviceManager } from './services/DeviceManager'
 
 // The built directory structure
 //
@@ -16,6 +19,23 @@ process.env.VITE_PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.
 let win: BrowserWindow | null
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
+
+// Initialize Services
+const UDP_PORT = 47777;
+const TCP_PORT = 47778;
+
+const deviceManager = new DeviceManager();
+const connectionManager = new ConnectionManager(TCP_PORT);
+const broadcastService = new BroadcastService(UDP_PORT, TCP_PORT);
+
+// Hook up events
+connectionManager.on('device-connected', (info) => {
+  deviceManager.addDevice({ id: info.id, ip: info.ip, status: 'connected', name: `Device (${info.ip})` });
+});
+
+connectionManager.on('device-disconnected', (info) => {
+  deviceManager.removeDevice(info.id);
+});
 
 function createWindow() {
   win = new BrowserWindow({
@@ -34,6 +54,7 @@ function createWindow() {
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
+    deviceManager.setWindow(win!);
   })
 
   if (VITE_DEV_SERVER_URL) {
@@ -62,9 +83,16 @@ ipcMain.on('window-close', () => {
   if (win) win.close();
 });
 
+// IPC Handlers for Devices
+ipcMain.handle('get-devices', () => {
+  return deviceManager.getDevices();
+});
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    broadcastService.stop();
+    connectionManager.stop();
     app.quit()
     win = null
   }
@@ -76,4 +104,8 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow();
+  broadcastService.start();
+  connectionManager.start();
+})
