@@ -15,7 +15,10 @@ class ConnectionClient {
     suspend fun connect(ip: String, port: Int): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                socket = Socket(ip, port)
+                socket = Socket()
+                socket?.connect(java.net.InetSocketAddress(ip, port), 5000)
+                socket?.soTimeout = 5000 // Set timeout for read operations
+                
                 out = PrintWriter(socket!!.getOutputStream(), true)
                 input = BufferedReader(InputStreamReader(socket!!.getInputStream()))
 

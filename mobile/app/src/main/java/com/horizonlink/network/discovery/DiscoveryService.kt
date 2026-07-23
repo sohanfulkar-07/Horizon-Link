@@ -1,54 +1,66 @@
 package com.horizonlink.network.discovery
 
+import com.horizonlink.model.DiscoveredDevice
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import org.json.JSONObject
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
-import com.horizonlink.model.DiscoveredDevice
 
 class DiscoveryService {
     private var socket: DatagramSocket? = null
-    private var isListening = false
 
-    suspend fun startListening(onDeviceDiscovered: (DiscoveredDevice) -> Unit) {
-        withContext(Dispatchers.IO) {
-            isListening = true
-            try {
-                socket = DatagramSocket(47777, InetAddress.getByName("0.0.0.0"))
-                socket?.broadcast = true
-                val buffer = ByteArray(1024)
+    fun startListening(): Flow<DiscoveredDevice> = callbackFlow {
+        val listeningSocket = try {
+            DatagramSocket(47777, InetAddress.getByName("0.0.0.0")).apply {
+                broadcast = true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            close()
+            return@callbackFlow
+        }
+        
+        socket = listeningSocket
+        val buffer = ByteArray(1024)
+
+        try {
+            while (!listeningSocket.isClosed) {
+                val packet = DatagramPacket(buffer, buffer.size)
+                listeningSocket.receive(packet)
                 
-                while (isListening) {
-                    val packet = DatagramPacket(buffer, buffer.size)
-                    socket?.receive(packet)
-                    
-                    val message = String(packet.data, 0, packet.length)
-                    try {
-                        val json = JSONObject(message)
-                        val device = DiscoveredDevice(
-                            hostName = json.getString("hostName"),
-                            ipAddress = json.getString("ipAddress"),
-                            version = json.getString("version"),
-                            tcpPort = json.getInt("tcpPort")
-                        )
-                        onDeviceDiscovered(device)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                val message = String(packet.data, 0, packet.length)
+                try {
+                    val json = JSONObject(message)
+                    val device = DiscoveredDevice(
+                        hostName = json.getString("hostName"),
+                        ipAddress = json.getString("ipAddress"),
+                        version = json.getString("version"),
+                        tcpPort = json.getInt("tcpPort")
+                    )
+                    trySend(device)
+                } catch (e: Exception) {
+                    // Ignore malformed packets
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
+            }
+        } catch (e: Exception) {
+            if (!listeningSocket.isClosed) {
                 e.printStackTrace()
-            } finally {
-                socket?.close()
-                socket = null
             }
         }
-    }
+
+        awaitClose {
+            listeningSocket.close()
+            socket = null
+        }
+    }.flowOn(Dispatchers.IO)
 
     fun stopListening() {
-        isListening = false
         socket?.close()
         socket = null
     }

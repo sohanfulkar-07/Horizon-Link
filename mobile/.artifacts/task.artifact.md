@@ -1,0 +1,5 @@
+- [x] Upgrade build dependencies (AGP, Kotlin, Compose Compiler)
+- [x] Refactor `ConnectionClient.kt` for reliability
+- [x] Refactor `DiscoveryService.kt` to use `Flow`
+- [x] Update `MainViewModel.kt` logic
+- [x] Verify build and fix any secondary issues

@@ -30,7 +30,7 @@ class MainViewModel : ViewModel() {
 
     private fun startDiscovery() {
         viewModelScope.launch {
-            discoveryService.startListening { newDevice ->
+            discoveryService.startListening().collect { newDevice ->
                 _devices.update { currentList ->
                     val existingIndex = currentList.indexOfFirst { it.device.ipAddress == newDevice.ipAddress }
                     if (existingIndex >= 0) {
@@ -67,9 +67,16 @@ class MainViewModel : ViewModel() {
                 list.map { if (it.device.ipAddress == ip) it.copy(isConnecting = true) else it }
             }
 
+            // Close existing connection if any
+            connectionClients[ip]?.disconnect()
+            
             val client = ConnectionClient()
             connectionClients[ip] = client
-            val success = client.connect(ip, port)
+            val success = try {
+                client.connect(ip, port)
+            } catch (e: Exception) {
+                false
+            }
 
             _devices.update { list ->
                 list.map { 
