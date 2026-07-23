@@ -1,6 +1,6 @@
 import os from 'os';
 import { app } from 'electron';
-import { UDPServer } from './UDPServer';
+import { UDPServer } from '../network/UDPServer';
 
 export class BroadcastService {
   private udpServer: UDPServer;

@@ -1,8 +1,9 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
-import { BroadcastService } from './services/BroadcastService'
-import { ConnectionManager } from './services/ConnectionManager'
-import { DeviceManager } from './services/DeviceManager'
+import { BroadcastService } from './discovery/BroadcastService'
+import { ConnectionManager } from './network/ConnectionManager'
+import { DeviceManager } from './discovery/DeviceManager'
+import { setupIpcHandlers } from './ipc/ipcHandlers'
 
 // The built directory structure
 //
@@ -64,31 +65,8 @@ function createWindow() {
   }
 }
 
-// IPC Handlers for custom title bar
-ipcMain.on('window-minimize', () => {
-  if (win) win.minimize();
-});
-
-ipcMain.on('window-maximize', () => {
-  if (win) {
-    if (win.isMaximized()) {
-      win.unmaximize();
-    } else {
-      win.maximize();
-    }
-  }
-});
-
-ipcMain.on('window-close', () => {
-  if (win) win.close();
-});
-
-// IPC Handlers for Devices
-ipcMain.handle('get-devices', () => {
-  return deviceManager.getDevices();
-});
-
-
+// Setup IPC handlers
+setupIpcHandlers(deviceManager, () => win);
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     broadcastService.stop();
