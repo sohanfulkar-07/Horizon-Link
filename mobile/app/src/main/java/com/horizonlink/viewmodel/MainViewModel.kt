@@ -1,10 +1,11 @@
-package com.horizonlink.ui
+package com.horizonlink.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.horizonlink.connection.ConnectionClient
-import com.horizonlink.discovery.DiscoveredDevice
-import com.horizonlink.discovery.DiscoveryService
+import com.horizonlink.network.connection.ConnectionClient
+import com.horizonlink.model.DiscoveredDevice
+import com.horizonlink.model.DeviceUiState
+import com.horizonlink.network.discovery.DiscoveryService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,12 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class DeviceUiState(
-    val device: DiscoveredDevice,
-    val isConnected: Boolean = false,
-    val isConnecting: Boolean = false
-)
 
 class MainViewModel : ViewModel() {
     private val discoveryService = DiscoveryService()

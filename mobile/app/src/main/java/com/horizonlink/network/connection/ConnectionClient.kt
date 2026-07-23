@@ -1,4 +1,4 @@
-package com.horizonlink.connection
+package com.horizonlink.network.connection
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

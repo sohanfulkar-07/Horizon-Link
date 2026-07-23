@@ -1,4 +1,4 @@
-package com.horizonlink.discovery
+package com.horizonlink.network.discovery
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -6,14 +6,7 @@ import org.json.JSONObject
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
-
-data class DiscoveredDevice(
-    val hostName: String,
-    val ipAddress: String,
-    val version: String,
-    val tcpPort: Int,
-    val lastSeen: Long = System.currentTimeMillis()
-)
+import com.horizonlink.model.DiscoveredDevice
 
 class DiscoveryService {
     private var socket: DatagramSocket? = null

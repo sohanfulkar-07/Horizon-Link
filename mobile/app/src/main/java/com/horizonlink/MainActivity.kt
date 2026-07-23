@@ -1,4 +1,4 @@
-package com.horizonlink.ui
+package com.horizonlink
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.horizonlink.ui.theme.HorizonLinkTheme
 import com.horizonlink.ui.theme.SuccessGreen
 import com.horizonlink.ui.theme.TextSecondary
+import com.horizonlink.viewmodel.MainViewModel
+import com.horizonlink.model.DeviceUiState
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
